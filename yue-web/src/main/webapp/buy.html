@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<script type="text/javascript" src="angularjs/angular.min.js"></script>
+<script src="angularjs/pagination.js"></script>
+<link rel="stylesheet" href="angularjs/pagination.css">
+<link rel="stylesheet" href="css2/index2.css" ></link>
+<script src="angularjs/pagination.js"></script>
+<link rel="stylesheet" href="angularjs/pagination.css">
+<script type="text/javascript">
+	var app = angular.module('myApp',[]);
+	app.controller('keController',function($scope,$http,$location){
+		$scope.entity=[]
+		$scope.findOne = function(){
+			var id = $location.search()['id'];
+			$http.get('../ke/findOne.do?id='+id).success(
+				function(response){
+					$scope.entity = response
+				}		
+			)
+		}
+		$scope.tj = function(){
+			$http.post('../ke/tj.do',$scope.entity).success(
+				function(response){
+					if(response.success){
+						alert("下单成功")
+					}else{
+						alert("下单失败")
+					}
+				}		
+			)
+		}
+	})
+</script>
+
+<body ng-app="myApp" ng-controller="keController" ng-init="findOne()">
+<table>
+	<tr>
+		<td>课程ID</td>
+		<td>
+			<input type="text" ng-model="entity.id">
+		</td>
+	</tr>
+	<tr>
+		<td>课程名称</td>
+		<td>
+			<input type="text" ng-model="entity.name">
+		</td>
+	</tr>
+	<tr>
+		<td>课程编号</td>
+		<td>
+			<input type="text" ng-model="entity.keId">
+		</td>
+	</tr>
+	<tr>
+		<td>课程类别</td>
+		<td>
+			<input type="text" ng-model="entity.type">
+		</td>
+	</tr>
+	<tr>
+		<td>课时</td>
+		<td>
+			<input type="text" ng-model="entity.price">
+		</td>
+	</tr>
+	<tr>
+		<td>讲课老师</td>
+		<td>
+			<input type="text" ng-model="entity.teacher">
+		</td>
+	</tr>
+	<tr>
+		<td>课程图片</td>
+		<td>
+			<img src="{{entity.images}}" width="100px" height="100px">
+			<input type="file" id="file">
+			<input type="button" value="上传图片" ng-click="upload()">
+		</td>
+	</tr>
+	<tr>
+		<td>开课日期</td>
+		<td>
+			<input type="text" ng-model="entity.kkDate">
+		</td>
+	</tr>
+	<tr>
+		<td colspan="11">
+			<input type="button" value="提交" ng-click="tj()">
+		</td>
+	</tr>
+</table>
+</body>
+</html>

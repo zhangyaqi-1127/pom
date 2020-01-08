@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<script type="text/javascript" src="angularjs/angular.min.js"></script>
+<script src="angularjs/pagination.js"></script>
+<link rel="stylesheet" href="angularjs/pagination.css">
+<link rel="stylesheet" href="css2/index2.css" ></link>
+<script src="angularjs/pagination.js"></script>
+<link rel="stylesheet" href="angularjs/pagination.css">
+<script type="text/javascript">
+	var app = angular.module('myApp',['pagination']);
+	app.controller('keController',function($scope,$http){
+		$scope.findByDingList=function(){
+			$http.get('../ke/findByDingList.do').success(
+				function(response){
+					$scope.list = response
+				}		
+			)
+		}
+	})
+</script>
+
+<body ng-app="myApp" ng-controller="keController" ng-init="findByDingList()">
+<input type="button" value="添加课程" ng-click="add()">
+<table>
+	<tr>
+		<td>编号</td>
+		<td>订单编号</td>
+		<td>课程编号</td>
+		<td>课程价格</td>
+		<td>购买人</td>
+		<td>状态</td>
+	</tr>
+	<tr ng-repeat="entity in list">
+		<td>{{entity.id}}</td>
+		<td>{{entity.dingId}}</td>
+		<td>{{entity.keId}}</td>
+		<td>{{entity.price}}</td>
+		<td>{{entity.buyName}}</td>
+		<td>{{entity.kkDate}}</td>
+		<td>
+			<span ng-if="entity.status==0">
+				待支付
+			</span>
+			<span ng-if="entity.status==1">
+				已支付
+			</span>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

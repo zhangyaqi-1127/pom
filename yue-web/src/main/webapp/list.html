@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<script type="text/javascript" src="angularjs/angular.min.js"></script>
+<script src="angularjs/pagination.js"></script>
+<link rel="stylesheet" href="angularjs/pagination.css">
+<link rel="stylesheet" href="css2/index2.css" ></link>
+<script src="angularjs/pagination.js"></script>
+<link rel="stylesheet" href="angularjs/pagination.css">
+<script type="text/javascript">
+	var app = angular.module('myApp',['pagination']);
+	app.controller('keController',function($scope,$http){
+		$scope.paginationConf = {
+				 currentPage: 1,
+				 totalItems: 10,
+				itemsPerPage: 3,
+				perPageOptions: [3, 20, 30, 40, 50],
+				onChange: function(){
+					$scope.reloadList();//重新加载
+				 }
+			};
+		$scope.username = function(){
+			$http.get('../ke/username.do').success(
+				function(response){
+					if(response.js==1){
+						$scope.reloadList()
+					}else{
+						location.href="ding.html"
+					}
+				}		
+			)
+		}
+		$scope.reloadList = function(){
+			$http.get('../ke/list.do?page='+$scope.paginationConf.currentPage+"&size="+$scope.paginationConf.itemsPerPage).success(
+				function(response){
+					$scope.paginationConf.totalItems=response.total
+					$scope.list = response.list
+				}		
+			)
+		}
+		$scope.add = function(){
+			location.href="add.html"
+		}
+		$scope.updateStatus = function(id){
+			$http.get('../ke/updateStatus.do?id='+id).success(
+				function(response){
+					if(response.success){
+						$scope.reloadList()
+					}else{
+						alert(response.message)
+					}
+				}		
+			)
+		}
+	})
+</script>
+
+<body ng-app="myApp" ng-controller="keController" ng-init="username()">
+<input type="button" value="添加课程" ng-click="add()">
+<table>
+	<tr>
+		<td>编号</td>
+		<td>课程编号</td>
+		<td>课程名称</td>
+		<td>课程类型</td>
+		<td>课时</td>
+		<td>代课老师</td>
+		<td>图片</td>
+		<td>开课日期</td>
+		<td>状态</td>
+		<td>操作</td>
+	</tr>
+	<tr ng-repeat="entity in list">
+		<td>{{entity.id}}</td>
+		<td>{{entity.keId}}</td>
+		<td>{{entity.name}}</td>
+		<td>{{entity.type}}</td>
+		<td>{{entity.price}}</td>
+		<td>{{entity.teacher}}</td>
+		<td>
+			<img src="{{entity.images}}" width="100px" height="100px">
+		</td>
+		<td>{{entity.kkDate}}</td>
+		<td>
+			<span ng-if="entity.status==0">
+				未发布
+			</span>
+			<span ng-if="entity.status==1">
+				已发布
+			</span>
+		</td>
+		<td>
+			<input type="button" ng-if="entity.status==0" value="上架" ng-click="updateStatus(entity.id)">
+			<input type="button" ng-if="entity.status==1" value="下架" ng-click="updateStatus(entity.id)">
+			<a href="http://localhost:9555/{{entity.id}}.html">详情</a>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="11">
+			<tm-pagination conf="paginationConf"></tm-pagination>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
